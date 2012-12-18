@@ -1,0 +1,6 @@
+name 'pebbleit-macdefaults'
+version '0.1.0'
+summary 'Manage defaults on an OS X system'
+author 'pebble.it'
+source 'https://github.com/mosen/puppet-cups.git'
+license 'Apache 2.0'
