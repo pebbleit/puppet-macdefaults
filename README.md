@@ -18,6 +18,8 @@ Possible valuse for ``type`` are:
 * dict
 * dict-add
 
+Example Puppet Code:
+
 	include mac-defaults
 	
 	mac-defaults { "set-a4":
