@@ -20,7 +20,7 @@ Possible valuse for ``type`` are:
 
 Example Puppet Code:
 
-	include mac-defaults
+	include macdefaults
 	
 	mac-defaults { "set-a4":
           domain => '/Library/Preferences/com.apple.print.PrintingPrefs',
