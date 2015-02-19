@@ -8,9 +8,9 @@ case $operatingsystem {
       exec {"defaults write $domain $key -$type '$value'":
         path => "/bin:/usr/bin",
           unless => $type ? {
-            bool => $value ? {
-              TRUE => "defaults read $domain $key | grep -qx 1",
-              FALSE => "defaults read $domain $key | grep -qx 0"
+            'bool' => $value ? {
+              'TRUE' => "defaults read $domain $key | grep -qx 1",
+              'FALSE' => "defaults read $domain $key | grep -qx 0"
               },
           default => "defaults read $domain $key | grep -qx $value | sed -e 's/ (.*)/\1/'"
         }
