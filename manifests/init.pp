@@ -2,7 +2,7 @@
 # string, data, int, float, bool, data, array, array-add, dict, dict-add
 define mac_defaults($domain, $key, $value = false, $type = "string", $action = "write") {
 case $operatingsystem {
- Darwin:{
+ 'Darwin':{
   case $action {
     "write": {
       exec {"defaults write $domain $key -$type '$value'":
