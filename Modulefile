@@ -1,5 +1,5 @@
 name 'grahamgilbert-macdefaults'
-version '0.0.1'
+version '1.0.0'
 summary 'Manage defaults on an OS X system'
 author 'Graham Gilbert'
 source 'https://github.com/pebbleit/puppet-macdefaults.git'
