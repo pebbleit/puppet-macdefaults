@@ -1,8 +1,8 @@
 # Note that type can be one of:
 # string, data, int, float, bool, data, array, array-add, dict, dict-add
-define mac-defaults($domain, $key, $value = false, $type = "string", $action = "write") {
+define mac_defaults($domain, $key, $value = false, $type = "string", $action = "write") {
 case $operatingsystem {
- Darwin:{
+ 'Darwin':{
   case $action {
     "write": {
       exec {"defaults write $domain $key -$type '$value'":
@@ -12,7 +12,7 @@ case $operatingsystem {
               'TRUE' => "defaults read $domain $key | grep -qx 1",
               'FALSE' => "defaults read $domain $key | grep -qx 0"
               },
-          default => "defaults read $domain $key | grep -qx $value | sed -e 's/ (.*)/\1/'"
+          default => "defaults read $domain $key | grep -qx $value | sed -e 's/ (.*)/\\1/'"
         }
       }
     }
