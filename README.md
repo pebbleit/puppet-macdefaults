@@ -1,4 +1,4 @@
-# OS X Defaults module for Puppet
+# macOS Defaults module for Puppet
 
 ## Note of potential disaster
 
