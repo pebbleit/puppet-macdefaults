@@ -1,14 +1,14 @@
 {
-  "name": "llauren-osx_defaults",
-  "version": "0.1.0",
+  "name": "llauren-macdefaults",
+  "version": "0.2.0",
   "author": "llauren",
-  "summary": "Handle OS X Defaults",
-  "license": "Apache-2.0",
+  "summary": "Handle MacOS Defaults",
+  "license": "FreeBSD",
   "source": "https://github.com/llauren/puppet-macdefaults",
   "project_page": "https://github.com/llauren/puppet-macdefaults",
   "issues_url": "https://github.com/llauren/puppet-macdefaults/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+    {"name":"puppetlabs-stdlib","version_requirement":">= 4.0.0"}
   ],
   "data_provider": null
 }

@@ -1,7 +1,7 @@
 # Class: macdefaults
 # ===========================
 #
-# Handle OS X Defaults from Puppet
+# Handle macOS `defaults` from Puppet
 #
 # Parameters
 # ----------
@@ -27,7 +27,7 @@
 # Authors
 # -------
 #
-# Robin Laurén <robin.lauren@st4.lan>
+# @author Robin Laurén <robin.lauren@reaktor.com>
 #
 # Based on the works of
 # * Will Farrington https://github.com/wfarr/puppet-osx_defaults
@@ -36,99 +36,57 @@
 # Copyright
 # ---------
 #
-# Copyright 2016 Robin Laurén / Reaktor
-#
+# Copyright (c) Robin Laurén / Reaktor (c) 2017, All rights reserved.
+# License: BSD 2-Clause License (see LICENSE)
 
-define macdefaults(
-  $ensure = 'present',
-  $domain = undef,
-  $key    = undef,
-  $value  = undef,
-  $type   = "string",
+class macdefaults (
+  String $ensure = 'present',
+  String $domain = undef,
+  String $key    = undef,
+  $value         = undef,
+  String $type   = 'string',
 ) {
 
-  case $operatingsystem {
+  assert_type(Enum['present', 'absent'], $ensure)
+  assert_type(Enum['string', 'data', 'int', 'integer', 'float', 'bool', 'boolean', 'date', 'array', 'array-add', 'dict', 'dict-add'], $type)
+  assert_type(String, $domain)
+  assert_type(String, $key)
 
-    "Darwin": {
-      $defaults_cmd = "/usr/bin/defaults"
+  if ($facts['operatingsystem'] != 'Darwin') {
+    fail('macdefaults only works on macOS')
+  }
 
-      case $ensure {
+  $defaults_cmd = '/usr/bin/defaults'
 
-        'present': {
-          if ($domain != undef) and ($key != undef) and ($value != undef) {
-            exec { "defaults write $domain $key -$type $value":
-              command => "${defaults_cmd} write ${domain} ${key} -${type} ${value}",
-              unless  => $type ? {
-                'bool' => $value ? {
-                  'True' => "${defaults_cmd} read ${domain} ${key} -${type} | grep -qx 1",
-                  'False' => "${defaults_cmd} read ${domain} ${key} -${type} | grep -qx 0",
-                },
-                default => "${defaults_cmd} read ${domain} ${key} -${type} | grep -qx ${value}",
-              }
-            }
-          } else {
-            warn ("macdefaults cannot ensure present without domain, key and value attributes")
-          }
-        }
+  case $ensure {
 
-        'absent': {
-          if ($domain != undef) and ($key != undef) {
-            exec { "defaults delete $domain $key":
-              command => "${defaults_cmd} delete ${domain} ${key}",
-              onlyif  => "${defaults_cmd} read ${domain} | egrep '^${key}$''",
-            }
-          } else {
-            warn ("macdefaults cannot ensure absent without domain and key attributes")
-          }
-        }
+    'present': {
+      if ($value == undef) {
+        fail ('`value` is missing')
+      }
 
-        default: {
-          warn ("macdefaults ensure => [present | absent] domain key type value")
-        }
+      if ($type =~ /^bool(ean)?$/) {
+        $bvalue = assert_type(Boolean, $value)
+        $nvalue = bool2num($bvalue)
+        $value  = bool2str($bvalue)
+        $check  = "${defaults_cmd} read ${domain} ${key} -${type} ${value} | grep -qx ${nvalue}"
+      } else {
+        $check = "${defaults_cmd} read ${domain} ${key} -${type} | grep -qx ${value}"
+      }
+
+      exec { "${defaults_cmd} write ${domain} ${key} -${type} ${value}":
+        unless  => $check,
       }
     }
+
+    'absent': {
+      exec { "${defaults_cmd} delete ${domain} ${key}":
+        onlyif => "${defaults_cmd} read ${domain} | egrep '^${key}$''",
+      }
+    }
+
     default: {
-      warn ("macdefaults only work on OS X")
+      fail ('macdefaults ensure => [present | absent] domain key type value')
     }
   }
-}
-
-
-
-
-
-# Note that type can be one of:
-# string, data, int, float, bool, data, array, array-add, dict, dict-add
-define mac-defaults($domain, $key, $value = false, $type = "string", $action = "write") {
-case $operatingsystem {
- Darwin:{
-  case $action {
-    "write": {
-      exec {"defaults write $domain $key -$type '$value'":
-        path => "/bin:/usr/bin",
-          unless => $type ? {
-            'bool' => $value ? {
-              'TRUE' => "defaults read $domain $key | grep -qx 1",
-              'FALSE' => "defaults read $domain $key | grep -qx 0"
-            },
-            default => "defaults read $domain $key | grep -qx $value | sed -e 's/ (.*)/\1/'"
-        }
-      }
-    }
-    "delete": {
-      exec {"defaults delete $domain $key":
-        path => "/bin:/usr/bin",
-        logoutput => false,
-        onlyif => "defaults read $domain | grep -q '$key'"
-      }
-    }
-  }
- }
-}
-
-
-}
-
-class macdefaults{
-
 }

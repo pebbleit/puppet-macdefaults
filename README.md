@@ -13,7 +13,6 @@ any other server park.
 1. [Setup - The basics of getting started with macdefaults](#setup)
     * [What macdefaults affects](#what-macdefaults-affects)
     * [Setup requirements](#setup-requirements)
-    * [Beginning with macdefaults](#beginning-with-macdefaults)
 1. [Usage - Configuration options and additional functionality](#usage)
 1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
 1. [Limitations - OS compatibility, etc.](#limitations)
@@ -21,7 +20,7 @@ any other server park.
 
 ## Description
 
-Set or remove your OS X Defaults with macdefaults.
+Set or remove your macOS `defaults` with macdefaults.
 
 This module is a re-write of the two modules i found floating around the
 interwebs for just this, namely:
@@ -33,27 +32,28 @@ Neither of these have been updated for years, and one of the files contained
 some kind of incompatibility with Puppet 4. So here's my mash-up of these two
 modules.
 
+The module includes some rudimentary error checking for missing and ill-formed
+values.
 
 ## Setup
 
+Clone or download this module to live nicely among your other puppet modules.
+Cross your fingers. Breathe normally.
+
 ### What macdefaults affects
 
-You can set or remove any OS X Defaults with this module, but you need to know
-the correct domain. For many fun and useful things to muck around with, have a
-look at https://github.com/boxen/puppet-osx.
+You can set or remove any macOS `defaults` with this module, but you need to
+know the correct domain. For many fun and useful things to muck around with,
+have a look at https://github.com/boxen/puppet-osx.
 
 ### Setup Requirements
 
-None that i can think of. You'll need a Mac (or more specifically, a macOS
-computer) to run this on.
-
-### Beginning with macdefaults
-
-Use carefully.
+Requires `puppetlabs-stdlib` version 4.0.0 or higher, and a Mac to run the
+module on.
 
 ## Usage
 
-In a manifest dealing with an OS X node (you know, a Mac), include something
+In a manifest dealing with a macOS node (you know, a Mac), include something
 along the lines of
 
 ```
@@ -65,17 +65,19 @@ macdefaults { "AppleUpdatesThroughMunki":
    value   => True,
 }
 ```
-The code above would ensure that Macs use Munki for Apple system udates.
+The example code above would ensure that Macs use Munki for Apple system udates.
 
 Possible values for `type` are those of OS X Defaults; ie. `string`, `data`,
-`int`, `float`, `bool`, `array`, `array-add`, `dict` and `dict-add`. That said,
-i've never tested any other values than `int`; i just copied this from Graham's
-macdefaults README.md, so don't take my word for it. Read the source. Understand
-what you do. And send me a patch if you find a bug.
+`int` (or `integer`), `float`, `bool` (or `boolean`), `array`, `array-add`,
+`dict` and `dict-add`. That said, i've never tested any other values than `int`;
+i just copied this from Graham's macdefaults README.md, so don't take my word
+for it. Read the source. Understand what you do. And send me a patch if you find
+a bug.
 
-The code includes some rather ingenious checking for indepotency (lifted from
-Gilbert's and Farrington's code). The type attribute isn't checked for
-correctness; this is left as an excercise for the reader :)
+The code includes some checking for idempotency. It used to be wicked clever,
+but rather opaque, so i expanded the code for readability. You can still find
+the original and quote ingenious checking code for boolean values in Gilbert's
+and Farrington's code.
 
 I removed the quotes inside some of the code, which might break stuff up.
 Please use quotes around any strange string values.
@@ -86,6 +88,7 @@ the values for the `bool` type _should_ be case-insensitive.
 
 ## Reference
 
+* `man defaults` on your Mac
 * https://github.com/wfarr/puppet-osx_defaults by Will Farrington, and
 * https://github.com/pebbleit/puppet-macdefaults by Graham Gilbert
 * https://github.com/boxen/puppet-osx by Boxen
@@ -100,7 +103,7 @@ Merge/pull requests welcome.
 
 ## Release Notes/Contributors/Etc.
 
-First version. Works on my machine. Only tested with the `Int` type. Your
+Second major rewrite. Works on my machine. Only tested with the `Int` type. Your
 mileage will most certainly vary. Handle with care and have mercy.
 
 If you think there are a lot of comments in the manifest file, it's just because
@@ -110,6 +113,6 @@ generate macdefaults`.
 ## Bug warning
 
 This module was originally called osx_defaults (from Will Farrington's code) but
-i chose to go with the name macdefaults, as OS X will soon be known as macOS
-rather than OS X. I hope i managed to find-replace all relevant instances of the
-old name in the code!
+i chose to go with the name macdefaults, as OS X is now known as macOS rather
+than OS X. I hope i managed to find-replace all relevant instances of the old
+name in the code!
